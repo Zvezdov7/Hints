@@ -1,0 +1,74 @@
+DockerHint
+
+Docker is the world’s leading software container platform. 
+
+An image is a lightweight, stand-alone, executable package that includes everything needed to run a piece of software, including the code, a runtime, libraries, environment variables, and config files.
+
+A container is a runtime instance of an image—what the image becomes in memory when actually executed. It runs completely isolated from the host environment by default, only accessing host files and ports if configured to do so.
+
+docker build -t friendlyhello .
+docker build -t ouruser/hello:v2 .
+the -t flag to identify our new image as belonging to the user ouruser, the repository name sinatra and given it the tag v2.
+
+docker images
+docker images -a
+docker images -f dangling=true
+
+docker ps
+docker ps -a
+
+docker stop container_name
+docker rm container_name
+docker rmi image_name
+
+docker run -d -p 4000:80 friendlyhello
+
+docker login
+docker tag image_name zvezdov7/repository_name:tag_name
+
+docker swarm init --advertise-addr 192.168.99.100 // ?
+--docker stack deploy -c docker-compose.yml getstartedlab
+--docker stack ps getstartedlab
+--docker stack rm getstartedlab
+docker node ps
+docker swarm leave --force
+
+
+The -t flag assigns a pseudo-tty or terminal inside our new container and 
+the -i flag allows us to make an interactive connection by grabbing the standard in (STDIN) of the container.
+The -d flag tells Docker to run the container and put it in the background, to daemonize it.
+The -P flag Publish all exposed ports to the host interfaces
+
+
+==Docker container output
+The docker logs command looks inside the container and returns its standard output
+This time though we’ve added a new flag, -f. This causes the docker logs command to act like the tail -f command and watch the container’s standard out.
+$ docker logs -f nostalgic_morse
+* Running on http://0.0.0.0:5000/
+10.0.2.2 - - [23/May/2014 20:16:31] "GET / HTTP/1.1" 200 -
+10.0.2.2 - - [23/May/2014 20:16:31] "GET /favicon.ico HTTP/1.1" 404 -
+
+==Show ports binding for container
+Using the docker ps command to return the mapped port is a bit clumsy so Docker has a useful shortcut we can use: docker port. To use docker port we specify the ID or name of our container and then the port for which we need the corresponding public-facing port.
+$ docker port nostalgic_morse 5000
+0.0.0.0:49155
+
+==Docker Get container info
+The docker inspect command. It returns a JSON hash of useful configuration and status information about Docker containers.
+$ docker inspect nostalgic_morse
+
+==Docker container naming
+This launches a new container and uses the --name flag to name the container web. You can see the container’s name using the docker ps command.
+$ docker run -d -P --name web training/webapp python app.py
+
+==Data Volume
+You can add a data volume to a container using the -v flag with the docker create and docker run command.
+$ docker run -d -P --name web -v /webapp training/webapp python app.py
+
+==Execute something in running Docker container
+docker exec -it [container-id] bash
+
+
+52102 task
+sudo docker run -d --name resty -p 4404:8080 -v ~/openresty/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf e67936fee36c
+172.17.0.5:8080/service/resty
